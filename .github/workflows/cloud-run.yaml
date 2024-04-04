@@ -1,0 +1,32 @@
+name: cloud-run/jobs
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency: ${{ github.ref }}-${{ github.workflow }}
+
+env:
+  IMAGE: us-docker.pkg.dev/eaglytics-project/docker-1/epic-media-notification
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: gcloud auth configure-docker asia-docker.pkg.dev
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: ${{ env.IMAGE }}
+          push: true
