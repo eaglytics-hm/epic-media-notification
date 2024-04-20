@@ -23,6 +23,7 @@ export const getData = async () => {
             worker_id: number;
             company_name: string;
             worker_status: string;
+            stage: string;
         };
         return await bigqueryClient.query(`call EpicMedia.Notification(true)`).then(([rows]) => <Hashrate[]>rows);
     };
@@ -69,6 +70,8 @@ export const notificationService = async () => {
                                 { type: 'text', text: row.company_name, style: { bold: true } },
                                 { type: 'text', text: ' ' },
                                 { type: 'text', text: row.worker_id.toString(), style: { code: true } },
+                                { type: 'text', text: ' ' },
+                                { type: 'text', text: row.stage, style: { code: true } },
                             ],
                         })),
                     },
